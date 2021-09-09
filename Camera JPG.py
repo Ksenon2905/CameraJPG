@@ -13,6 +13,7 @@ pic = 0
 cnt = 0
 tmp1 = []
 
+#Открытие выбранного изображения
 def openfile():
     global pic, canvas
     zz = Image.open(tk.filedialog.askopenfilename(title="Open Photo",
@@ -21,11 +22,13 @@ def openfile():
     pic = ImageTk.PhotoImage(zz)
     canvas.create_image(0, 0, anchor='nw', image=pic)
 
-def linelen(x1, x2, y1, y2):   ##Расчёт расстояния
+##Расчёт расстояния
+def linelen(x1, x2, y1, y2):
     global txtvar
     return "{} mm".format(int((sqrt((x2-x1)**2+(y2-y1)**2))*float(txtvar.get())))
 
-def click(event):              ##Точка в мете клика и вырисовка линии
+ ##Точка в меcте клика и вырисовка линии
+def click(event):
     global cnt, tmp1
     if cnt == 0:
         canvas.create_oval(event.x - 2, event.y - 2, event.x + 2, event.y + 2,
@@ -44,6 +47,7 @@ def click(event):              ##Точка в мете клика и вырис
 
     print("x: {}, y: {}".format(event.x, event.y))
 
+#Захват кадра и сохранение
 def jpg_camera():
     global screen_name_jpg
     cap = cv2.VideoCapture(0)
@@ -55,47 +59,51 @@ def jpg_camera():
             cv2.imwrite(screen_name_jpg, frame)
     cap.release()
     return
-jpg_camera()
 
+#Удаление всех элементов
 def clear_items():
     canvas.delete(tk.ALL)
 
-clear_btn = tk.Button(screen, text="Удалить элементы",
+jpg_camera()
+
+clear_btn = tk.Button(screen, text="Удалить ВСЕ элементы",
                               command=clear_items)
-clear_btn.place(x=100, y=490)
+clear_btn.place(x=10, y=480)
+
 open_btn = tk.Button(screen, text="Открыть", image=pixelVirtual,
                           width=120,
                           height=20,
                           compound="c", command=openfile)
-open_btn.place(x=650, y=0)
+open_btn.place(x=640, y=0)
 
 ent = tk.Entry(screen, textvariable=txtvar)
-ent.insert(0, "тут мм писать нада")
-ent.place(x=650, y=30)
-
-scrollbar = tk.Scrollbar(screen, orient=VERTICAL) #
-scrollbar.place(x=50, y=490)
-
-
-def on_click():
-    item = canvas.find_withtag(tk.CURRENT)
-    canvas.delete(item)
-
-clear_last_btn = tk.Button(screen, text="Удалить последнее",
-                              command=on_click)
-clear_last_btn.place(x=150, y=490)
+ent.insert(0, "тут мм в пкс надо")
+ent.place(x=640, y=30)
 
 im = Image.open(screen_name_jpg)
 (width_screen, height_screen) = im.size
 print("Качество изображения:", im.size)
 
+screen.geometry('800x600')
 canvas = tk.Canvas(screen, width = width_screen, height = height_screen)
 canvas.pack()
-image = Image.open(screen_name_jpg)
-photo = ImageTk.PhotoImage(image)
-canvas.place(x=0, y=0)
+photo = ImageTk.PhotoImage(im)
+canvas.create_image(0, 0, anchor = 'nw', image = photo)
+canvas.place(x = 0, y = 0)
 canvas.bind('<Button-1>', click)
 screen.mainloop()
 
-#Кнопка открытия файла
+#scrollbar = tk.Scrollbar(screen, orient=VERTICAL) #
+#scrollbar.place(x=50, y=490)
+
+#Выбор элемента
+#def on_click():
+#    item = canvas.find_withtag(tk.CURRENT)
+#    canvas.delete(item)
+
+#Кнопка для удаления последнего элемента
+#clear_last_btn = tk.Button(screen, text="Удалить последнее",
+#                              command=on_click)
+#clear_last_btn.place(x=150, y=490)
+
 
